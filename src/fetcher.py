@@ -1,9 +1,13 @@
 """
 Fetcher module: integrates multiple retrieval tools
+- MediaCrawler for Chinese platforms (XHS, Zhihu, Douyin, Bilibili, Weibo, Tieba, Kuaishou)
 - xreach (via Agent-Reach) for Twitter/X
 - yt-dlp (via Agent-Reach) for YouTube/Bilibili
 - r.jina.ai for JavaScript-heavy pages
 - Basic HTTP for simple pages
+
+Credit: This module uses MediaCrawler (https://github.com/NanmiCoder/MediaCrawler)
+        for robust Chinese platform support. Thank you to the MediaCrawler team!
 """
 
 from __future__ import annotations
@@ -14,6 +18,7 @@ import urllib.request
 from dataclasses import dataclass
 from typing import Optional
 from extractors import smart_extract
+from mediacrawler_adapter import fetch_with_mediacrawler, is_chinese_platform
 
 
 @dataclass
@@ -185,29 +190,61 @@ def fetch_with_basic_http(url: str) -> FetchResult:
 def smart_fetch(url: str, strategy: str = "auto") -> FetchResult:
     """
     Intelligently fetch URL with fallback strategy
-    
+
+    Priority:
+    1. MediaCrawler for Chinese platforms (XHS, Zhihu, Douyin, etc.)
+    2. xreach for Twitter/X
+    3. Jina Reader for JavaScript-heavy pages
+    4. Basic HTTP for simple pages
+
     Args:
         url: URL to fetch
-        strategy: "auto", "xreach_first", "jina_first", "basic_only"
-    
+        strategy: "auto", "mediacrawler_first", "xreach_first", "jina_first", "basic_only"
+
     Returns:
         FetchResult with retrieval details
     """
     retrieval_path = []
-    
+
     if strategy == "auto":
+        # Check if it's a Chinese platform supported by MediaCrawler
+        if is_chinese_platform(url):
+            strategy = "mediacrawler_first"
         # Auto-detect best strategy based on URL
-        if "x.com" in url or "twitter.com" in url:
+        elif "x.com" in url or "twitter.com" in url:
             strategy = "xreach_first"
         elif "youtube.com" in url or "youtu.be" in url:
             # For YouTube, we would use yt-dlp, but for now fallback to jina
             strategy = "jina_first"
-        elif "xiaohongshu.com" in url or "xhs.com" in url:
-            # For XHS, try jina first as it might work
-            strategy = "jina_first"
         else:
             strategy = "basic_first"
-    
+
+    if strategy == "mediacrawler_first":
+        # Try MediaCrawler first for Chinese platforms
+        mc_result = fetch_with_mediacrawler(url)
+        retrieval_path.append(("mediacrawler", mc_result.success))
+
+        if mc_result.success:
+            return FetchResult(
+                success=True,
+                content=mc_result.content,
+                tool_used="mediacrawler"
+            )
+
+        # Fallback to basic HTTP + extractor
+        result = fetch_with_basic_http(url)
+        retrieval_path.append(("basic_http", result.success))
+
+        if result.success:
+            return result
+
+        # Last resort: Jina Reader
+        result = fetch_with_jina(url)
+        retrieval_path.append(("jina_reader", result.success))
+
+        if result.success:
+            return result
+
     if strategy == "xreach_first":
         # Try xreach first (for Twitter/X)
         result = fetch_with_xreach(url)

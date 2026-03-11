@@ -1,15 +1,35 @@
 # OpenClaw Layered Search
 
-**Less guessing, more grounded retrieval.**
+**Intelligent retrieval orchestration for OpenClaw agents.**
 
-OpenClaw Layered Search is a layered retrieval orchestration for OpenClaw agents.
-It helps agents choose a better information-access path **before** answering.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
-Current V1 focus:
-- handle link-first input reliably
-- reduce hallucinations after failed fetches
-- fallback sanely for hard pages (especially X/Twitter)
-- summarize only from actually retrieved content
+> Give any URL to OpenClaw, get intelligent content retrieval with automatic fallback strategies.
+
+## 🎯 For OpenClaw Users
+
+**Just want to use it?** → See [QUICKSTART.md](QUICKSTART.md)
+
+Send any link to OpenClaw (via Feishu, Telegram, or chat), and it will:
+- ✅ Automatically detect the best way to fetch content
+- ✅ Try multiple methods if one fails
+- ✅ Summarize the content for you
+- ✅ **Support Chinese platforms out of the box** (小红书, 知乎, 抖音, B站, 微博, 贴吧, 快手)
+
+## 🚀 Quick Install
+
+```bash
+git clone https://github.com/Dongue888/openclaw-layered-search.git ~/.openclaw/skills/openclaw-layered-search
+cd ~/.openclaw/skills/openclaw-layered-search
+./install.sh
+```
+
+Then just send a URL to OpenClaw!
+
+## 🙏 Credits
+
+This project integrates **[MediaCrawler](https://github.com/NanmiCoder/MediaCrawler)** (45K+ ⭐) by NanmiCoder for robust Chinese platform support. Thank you to the MediaCrawler team for their excellent work!
 
 ---
 

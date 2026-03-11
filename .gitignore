@@ -1,3 +1,19 @@
 __pycache__/
 *.pyc
 .pytest_cache/
+
+# MediaCrawler (installed by install.sh)
+tools/
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
