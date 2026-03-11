@@ -1,0 +1,15 @@
+# Core dependencies
+playwright>=1.40.0
+beautifulsoup4>=4.12.0
+
+# Search (fallback when ask-search not available)
+ddgs>=1.0.0
+
+# Optional: for better search (install separately)
+# ask-search: https://github.com/ythx-101/ask-search
+# Install: git clone https://github.com/ythx-101/ask-search && follow their README
+
+# Optional: for platform-specific scraping (install separately)
+# Agent-Reach: https://github.com/Panniantong/Agent-Reach  
+# Install: pip install https://github.com/Panniantong/agent-reach/archive/main.zip
+# Then run: agent-reach install --env=auto
